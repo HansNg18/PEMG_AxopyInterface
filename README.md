@@ -95,4 +95,7 @@ python PEMG_robolimb_control.py --DCPNP2
 ```
 
 
+## Notes
+All settings are stored and loaded from an external configuration file (config.ini).
+
 
