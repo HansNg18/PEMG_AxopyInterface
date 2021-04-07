@@ -7,91 +7,91 @@ In this application, we train the users to use direct control and abstract contr
 ## Guildlines
 1. System calibration (comfortable contraction level and rest level): 
 ```python
-python PEMG_robolimb_control_v4.py –-Calibration
+python PEMG_robolimb_control.py –-Calibration
 ```
 2. System calibration (rest level only): 
 ```python
-python PEMG_robolimb_control_v4.py –-CalibrationLow
+python PEMG_robolimb_control.py –-CalibrationLow
 ```
 3.Visualize the EMG signals and MAVs:
 ```python
-python PEMG_robolimb_control_v4.py --Validation
+python PEMG_robolimb_control.py --Validation
 ```
 4.Record the calibration values:
 ```python
-python PEMG_robolimb_control_v4.py --ReadCalibration
+python PEMG_robolimb_control.py --ReadCalibration
 ```
 5.Change the control algorithm to abstract control:
 ```python
-python PEMG_robolimb_control_v3.py --SetACtrl
+python PEMG_robolimb_control.py --SetACtrl
 ```
 6.Change the control algorithm to direct control:
 ```python
-python PEMG_robolimb_control_v3.py --SetDCtrl
+python PEMG_robolimb_control.py --SetDCtrl
 ```
 7.MCI training for abstract control with visual feedback:
 ```python
-python PEMG_robolimb_control_v4.py --ACtrainVisible
+python PEMG_robolimb_control.py --ACtrainVisible
 ```
 8.MCI training for abstract control without visual feedback:
 ```python
-python PEMG_robolimb_control_v4.py --ACtrainInv
+python PEMG_robolimb_control.py --ACtrainInv
 ```
 9.MCI trials for abstract control with visual feedback:
 ```python
-python PEMG_robolimb_control_v4.py --ACtestVisible
+python PEMG_robolimb_control.py --ACtestVisible
 ```
 10.MCI trials for abstract control without visual feedback:
 ```python
-python PEMG_robolimb_control_v4.py --ACtestInv
+python PEMG_robolimb_control.py --ACtestInv
 ```
 11.Box and blocks tests for abstract control:
 ```python
-python PEMG_robolimb_control_v4.py --ACBNB
+python PEMG_robolimb_control.py --ACBNB
 ```
 12.Pick and place trainings for abstract control:
 ```python
-python PEMG_robolimb_control_v4.py --ACPNPTrain
+python PEMG_robolimb_control.py --ACPNPTrain
 ```
 13.Pick and place tests task 1 for abstract control :
 ```python
-python PEMG_robolimb_control_v4.py --ACPNP1
+python PEMG_robolimb_control.py --ACPNP1
 ```
 14.Pick and place tests task 2 for abstract control :
 ```python
-python PEMG_robolimb_control_v4.py --ACPNP2
+python PEMG_robolimb_control.py --ACPNP2
 ```
 15.MCI training for direct control with visual feedback:
 ```python
-python PEMG_robolimb_control_v3.py --DCtrainVisible
+python PEMG_robolimb_control.py --DCtrainVisible
 ```
 16.MCI training for direct control without visual feedback:
 ```python
-python PEMG_robolimb_control_v3.py --DCtrainInv
+python PEMG_robolimb_control.py --DCtrainInv
 ```
 17.MCI trials for direct control with visual feedback:
 ```python
-python PEMG_robolimb_control_v3.py --DCtestVisible
+python PEMG_robolimb_control.py --DCtestVisible
 ```
 18.MCI trials for direct control without visual feedback:
 ```python
-python PEMG_robolimb_control_v3.py --DCtestInv
+python PEMG_robolimb_control.py --DCtestInv
 ```
 19.Box and blocks tests for direct control:
 ```python
-python PEMG_robolimb_control_v3.py --DCBNB
+python PEMG_robolimb_control.py --DCBNB
 ```
 20.Pick and place trainings for direct control :
 ```python
-python PEMG_robolimb_control_v4.py --DCPNPTrain
+python PEMG_robolimb_control.py --DCPNPTrain
 ```
 21.Pick and place tests task 1 for direct control :
 ```python
-python PEMG_robolimb_control_v4.py --DCPNP1
+python PEMG_robolimb_control.py --DCPNP1
 ```
 22.Pick and place tests task 2 for direct control :
 ```python
-python PEMG_robolimb_control_v4.py --DCPNP2
+python PEMG_robolimb_control.py --DCPNP2
 ```
 
 
