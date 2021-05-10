@@ -13,6 +13,7 @@ import numpy as np
 import math
 import datetime
 import time
+import winsound
 
 from argparse import ArgumentParser
 from configparser import ConfigParser
@@ -503,13 +504,13 @@ class ACTestVisible(Task):
         self.accuracy2 =self.num_correct2/self.num_trial2
         self.accuracy3 =self.num_correct3/self.num_trial3
         self.accuracy4 =self.num_correct4/self.num_trial4
-        self.text_Accuracy1.qitem.setText('Taks1 Accuracy: ' + str(self.accuracy1))
+        self.text_Accuracy1.qitem.setText('Target1 Accuracy: ' + str(self.accuracy1))
         self.text_Accuracy1.show()
-        self.text_Accuracy2.qitem.setText('Taks2 Accuracy: ' + str(self.accuracy2))
+        self.text_Accuracy2.qitem.setText('Target2 Accuracy: ' + str(self.accuracy2))
         self.text_Accuracy2.show()
-        self.text_Accuracy3.qitem.setText('Taks3 Accuracy: ' + str(self.accuracy3))
+        self.text_Accuracy3.qitem.setText('Target3 Accuracy: ' + str(self.accuracy3))
         self.text_Accuracy3.show()
-        self.text_Accuracy4.qitem.setText('Taks4 Accuracy: ' + str(self.accuracy4))
+        self.text_Accuracy4.qitem.setText('Target4 Accuracy: ' + str(self.accuracy4))
         self.text_Accuracy4.show()
         
 
@@ -781,13 +782,13 @@ class ACTestInv(Task):
         self.accuracy2 =self.num_correct2/self.num_trial2
         self.accuracy3 =self.num_correct3/self.num_trial3
         self.accuracy4 =self.num_correct4/self.num_trial4
-        self.text_Accuracy1.qitem.setText('Taks1 Accuracy: ' + str(self.accuracy1))
+        self.text_Accuracy1.qitem.setText('Target1 Accuracy: ' + str(self.accuracy1))
         self.text_Accuracy1.show()
-        self.text_Accuracy2.qitem.setText('Taks2 Accuracy: ' + str(self.accuracy2))
+        self.text_Accuracy2.qitem.setText('Target2 Accuracy: ' + str(self.accuracy2))
         self.text_Accuracy2.show()
-        self.text_Accuracy3.qitem.setText('Taks3 Accuracy: ' + str(self.accuracy3))
+        self.text_Accuracy3.qitem.setText('Target3 Accuracy: ' + str(self.accuracy3))
         self.text_Accuracy3.show()
-        self.text_Accuracy4.qitem.setText('Taks4 Accuracy: ' + str(self.accuracy4))
+        self.text_Accuracy4.qitem.setText('Target4 Accuracy: ' + str(self.accuracy4))
         self.text_Accuracy4.show()
         
 
@@ -900,6 +901,7 @@ class ACPickNPlaceRecording1(Task):
         self.Tstart = time.time()
         self.pipeline.clear()        
         self.connect(self.daqstream.updated, self.cursor_following)
+        winsound.Beep(2500, 500)
         
     def cursor_following(self, data):
         self.trial.arrays['data_Arduino'].stack(data)
@@ -940,6 +942,7 @@ class ACPickNPlaceRecording1(Task):
         
         self.writer.write(self.trial)
         self.disconnect(self.daqstream.updated, self.cursor_following)
+        winsound.Beep(2500, 500)
         self.next_trial()    
         
 
@@ -1074,6 +1077,7 @@ class ACPickNPlaceRecording2(Task):
         self.Tstart = time.time()
         self.pipeline.clear()        
         self.connect(self.daqstream.updated, self.cursor_following)
+        winsound.Beep(2500, 500)
         
     def cursor_following(self, data):
         self.trial.arrays['data_Arduino'].stack(data)
@@ -1114,6 +1118,7 @@ class ACPickNPlaceRecording2(Task):
         
         self.writer.write(self.trial)
         self.disconnect(self.daqstream.updated, self.cursor_following)
+        winsound.Beep(2500, 500)
         self.next_trial()    
         
 
@@ -1248,6 +1253,7 @@ class ACPickNPlaceTrain(Task):
         self.Tstart = time.time()
         self.pipeline.clear()        
         self.connect(self.daqstream.updated, self.cursor_following)
+        winsound.Beep(2500, 500)
         
     def cursor_following(self, data):
         self.trial.arrays['data_Arduino'].stack(data)
@@ -1288,6 +1294,7 @@ class ACPickNPlaceTrain(Task):
         
         self.writer.write(self.trial)
         self.disconnect(self.daqstream.updated, self.cursor_following)
+        winsound.Beep(2500, 500)
         self.next_trial()    
         
 
@@ -1459,6 +1466,169 @@ class ACBoxNBlocksRecording(Task):
         self.text_trial.show()
         
         self.writer.write(self.trial)
+        self.disconnect(self.daqstream.updated, self.cursor_following)
+        self.next_trial()    
+        
+
+
+    def _reset(self):
+        self.target1.hide()
+        self.target2.hide()
+        self.target3.hide()
+        self.target4.hide()
+        self.background1.show()
+        self.background2.show()
+        self.background3.show()
+        self.background4.show()
+        self.background5.show()
+        self.cursor.show()
+        self.text_trial.hide()
+        self.result_timer.reset()
+        
+
+       
+    def finish(self):
+        
+        self.daqstream.stop()
+        self.target1.hide()
+        self.target2.hide()
+        self.target3.hide()
+        self.target4.hide()
+        self.background1.hide()
+        self.background2.hide()
+        self.background3.hide()
+        self.background4.hide()
+        self.background5.hide()
+        self.cursor.hide()
+        self.text_trial.hide()
+        self.text_exp.show()
+        
+
+    def key_press(self, key):
+        if key == util.key_escape:
+            self.finish()
+        else:
+            super().key_press(key)
+              
+            
+    def read_time(self):
+        current_time = datetime.datetime.now()
+        t = current_time.strftime("%Y%m%d%H%M%S")
+        return t
+    
+class ACBoxNBlocksTrain(Task):
+    
+    def __init__(self, pipeline):
+        super(ACBoxNBlocksTrain, self).__init__()
+        self.pipeline = pipeline
+        
+        self.previous_grip = 1
+        self.num_trial = 0.0
+        self.num_correct = 0.0
+      
+    def prepare_design(self, design):
+        for test in range(1):
+            block = design.add_block()
+            block.add_trial(attrs={
+                                'block':str(test)
+                })
+        
+    def prepare_graphics(self, container):
+        origin=(0,-1)
+
+        '''build the background'''
+        self.canvas = Canvas(draw_border=False, bg_color='k')
+        self.background1 = Basket(xy_origin=origin, size=0.6)
+        self.background2 = Target(xy_origin=origin,theta_target=22.5,rotation=45, r1=2, r2=0.6)
+        self.background3 = Target(xy_origin=origin,theta_target=22.5,rotation=67.5, r1=2, r2=0.6)
+        self.background4 = Target(xy_origin=origin,theta_target=22.5,rotation=90, r1=2, r2=0.6)
+        self.background5 = Target(xy_origin=origin,theta_target=22.5,rotation=112.5, r1=2, r2=0.6)
+        self.canvas.add_item(self.background1)
+        self.canvas.add_item(self.background2)
+        self.canvas.add_item(self.background3)
+        self.canvas.add_item(self.background4)
+        self.canvas.add_item(self.background5)
+
+        
+        '''build the cursor and target'''       
+        self.cursor = Circle(CURSOR_SIZE, color='red')
+        self.target1 = Target(xy_origin=origin,theta_target=22.5,rotation=112.5, r1=2, r2=0.6,linewidth=0.03,color='yellow')
+        self.target2 = Target(xy_origin=origin,theta_target=22.5,rotation=90, r1=2, r2=0.6,linewidth=0.03,color='yellow')
+        self.target3 = Target(xy_origin=origin,theta_target=22.5,rotation=67.5, r1=2, r2=0.6,linewidth=0.03,color='yellow')
+        self.target4 = Target(xy_origin=origin,theta_target=22.5,rotation=45, r1=2, r2=0.6,linewidth=0.03,color='yellow')
+        self.target1.hide()
+        self.target2.hide()
+        self.target3.hide()
+        self.target4.hide()
+        self.canvas.add_item(self.cursor)
+        self.canvas.add_item(self.target1)
+        self.canvas.add_item(self.target2)
+        self.canvas.add_item(self.target3)
+        self.canvas.add_item(self.target4)
+        
+
+        '''result interface'''
+        self.text_trial = Text(text ='Trial finished', color ='#f1f505')
+        self.text_trial.hide()
+        self.text_trial.x = -0.35
+        self.text_exp = Text(text ='Trial finished', color ='#f1f505')
+        self.text_exp.hide() 
+        self.text_exp.x = -0.4
+        self.canvas.add_item(self.text_trial)
+        self.canvas.add_item(self.text_exp)
+        
+        container.set_widget(self.canvas)
+
+
+    
+    def prepare_daq(self, daqstream):
+        self.daqstream = daqstream
+        self.daqstream.start()
+        
+        self.result_timer = Counter(50*60)
+        self.result_timer.timeout.connect(self.finish_trial)
+    
+   
+    def run_trial(self, trial):
+        self._reset()
+        trial.add_array('data_Arduino', stack_axis=1)
+        self.pipeline.clear()        
+        self.connect(self.daqstream.updated, self.cursor_following)
+        
+    def cursor_following(self, data):
+        self.trial.arrays['data_Arduino'].stack(data)
+        self.pos_x,self.pos_y,self.grip = self.pipeline.process(data)
+        self.cursor.pos = ((self.pos_x,self.pos_y))
+        
+        grip = int(self.grip)
+        
+        if (self.previous_grip == 0) and (grip != 0):
+            eval("self.target"+str(grip)+".show()") 
+        elif (self.previous_grip != 0) and (grip == 0):
+            self.target1.hide()
+            self.target2.hide()
+            self.target3.hide()
+            self.target4.hide()
+                
+        self.previous_grip = grip
+        self.result_timer.increment()
+        
+        
+    
+    def finish_trial(self):
+        self.target1.hide()
+        self.target2.hide()
+        self.target3.hide()
+        self.target4.hide()
+        self.background1.hide()
+        self.background2.hide()
+        self.background3.hide()
+        self.background4.hide()
+        self.background5.hide()
+        self.cursor.hide()
+        self.text_trial.qitem.setText('Trial ' + str(self.trial.attrs['block'])+ ' finished')
+        self.text_trial.show()
+        
         self.disconnect(self.daqstream.updated, self.cursor_following)
         self.next_trial()    
         
@@ -2208,6 +2378,7 @@ class DCPickNPlaceRecording1(Task):
         self.Tstart = time.time()
         self.pipeline.clear()        
         self.connect(self.daqstream.updated, self.cursor_following)
+        winsound.Beep(2500, 500)
         
     def cursor_following(self, data):
         self.trial.arrays['data_Arduino'].stack(data)
@@ -2248,6 +2419,7 @@ class DCPickNPlaceRecording1(Task):
         
         self.writer.write(self.trial)
         self.disconnect(self.daqstream.updated, self.cursor_following)
+        winsound.Beep(2500, 500)
         self.next_trial()  
         
     def _reset(self):
@@ -2365,6 +2537,7 @@ class DCPickNPlaceRecording2(Task):
         self.Tstart = time.time()
         self.pipeline.clear()        
         self.connect(self.daqstream.updated, self.cursor_following)
+        winsound.Beep(2500, 500)
         
     def cursor_following(self, data):
         self.trial.arrays['data_Arduino'].stack(data)
@@ -2405,6 +2578,7 @@ class DCPickNPlaceRecording2(Task):
         
         self.writer.write(self.trial)
         self.disconnect(self.daqstream.updated, self.cursor_following)
+        winsound.Beep(2500, 500)
         self.next_trial()  
         
     def _reset(self):
@@ -2521,6 +2695,7 @@ class DCPickNPlaceTrain(Task):
         self.Tstart = time.time()
         self.pipeline.clear()        
         self.connect(self.daqstream.updated, self.cursor_following)
+        winsound.Beep(2500, 500)
         
     def cursor_following(self, data):
         self.trial.arrays['data_Arduino'].stack(data)
@@ -2561,6 +2736,7 @@ class DCPickNPlaceTrain(Task):
         
         self.writer.write(self.trial)
         self.disconnect(self.daqstream.updated, self.cursor_following)
+        winsound.Beep(2500, 500)
         self.next_trial()  
         
     def _reset(self):
@@ -2753,6 +2929,152 @@ class DCBoxNBlocksRecording(Task):
         current_time = datetime.datetime.now()
         t = current_time.strftime("%Y%m%d%H%M%S")
         return t
+    
+
+class DCBoxNBlocksTrain(Task):
+    
+    def __init__(self, pipeline):
+        super(DCBoxNBlocksTrain, self).__init__()
+        self.pipeline = pipeline
+
+        self.previous_grip = 1
+      
+    def prepare_design(self, design):
+        for test in range(1):
+            block = design.add_block()
+            block.add_trial(attrs={
+                                'block':str(test)
+                })
+        
+    def prepare_graphics(self, container):
+        origin=(0,-1)
+
+        '''build the background'''
+        self.canvas = Canvas(draw_border=False, bg_color='k')
+        self.background1 = Basket(xy_origin=origin, size=0.6)
+        self.background2 = Target(xy_origin=origin,theta_target=22.5,rotation=45, r1=2, r2=0.6)
+        self.background3 = Target(xy_origin=origin,theta_target=45,rotation=67.5, r1=2, r2=0.6)
+        self.background5 = Target(xy_origin=origin,theta_target=22.5,rotation=112.5, r1=2, r2=0.6)
+        self.canvas.add_item(self.background1)
+        self.canvas.add_item(self.background2)
+        self.canvas.add_item(self.background3)
+        self.canvas.add_item(self.background5)
+
+        '''build the cursor and target'''       
+        self.cursor = Circle(CURSOR_SIZE, color='red')
+        # self.cursor.hide()
+        self.target1 = Target(xy_origin=origin,theta_target=22.5,rotation=112.5, r1=2, r2=0.6,linewidth=0.03,color='yellow')
+        self.target2 = Target(xy_origin=origin,theta_target=45,rotation=67.5, r1=2, r2=0.6,linewidth=0.03,color='yellow')
+        self.target3 = Target(xy_origin=origin,theta_target=22.5,rotation=45, r1=2, r2=0.6,linewidth=0.03,color='yellow')
+        self.target1.hide()
+        self.target2.hide()
+        self.target3.hide()
+        self.canvas.add_item(self.cursor)
+        self.canvas.add_item(self.target1)
+        self.canvas.add_item(self.target2)
+        self.canvas.add_item(self.target3)
+        
+        '''result interface'''
+        self.text_trial = Text(text ='Trial finished', color ='#f1f505')
+        self.text_trial.hide()
+        self.text_trial.x = -0.35
+        self.text_exp = Text(text ='Trial finished', color ='#f1f505')
+        self.text_exp.hide() 
+        self.text_exp.x = -0.4
+        self.canvas.add_item(self.text_trial)
+        self.canvas.add_item(self.text_exp)
+        
+        container.set_widget(self.canvas)
+        
+    def prepare_daq(self, daqstream):
+        self.daqstream = daqstream
+        self.daqstream.start()
+        
+        self.result_timer = Counter(50*60)
+        self.result_timer.timeout.connect(self.finish_trial)
+    
+   
+    def run_trial(self, trial):
+        self._reset()
+        trial.add_array('data_Arduino', stack_axis=1)
+        self.pipeline.clear()        
+        self.connect(self.daqstream.updated, self.cursor_following)
+        
+    def cursor_following(self, data):
+        self.trial.arrays['data_Arduino'].stack(data)
+        self.pos_x,self.pos_y,self.grip = self.pipeline.process(data)
+        self.cursor.pos = ((self.pos_x,self.pos_y))
+        
+        grip = int(self.grip)
+        if (grip == 3):
+            grip =2
+        elif (grip ==4):
+            grip = 3
+        
+        if (self.previous_grip == 0) and (grip != 0):
+            eval("self.target"+str(grip)+".show()") 
+        elif (self.previous_grip != 0) and (grip == 0):
+            self.target1.hide()
+            self.target2.hide()
+            self.target3.hide()
+                
+        self.previous_grip = grip
+        self.result_timer.increment()
+        
+    def finish_trial(self):
+        self.target1.hide()
+        self.target2.hide()
+        self.target3.hide()
+        self.background1.hide()
+        self.background2.hide()
+        self.background3.hide()
+        self.background5.hide()
+        self.cursor.hide()
+        self.text_trial.qitem.setText('Trial ' + str(self.trial.attrs['block'])+ ' finished')
+        self.text_trial.show()
+        
+        self.disconnect(self.daqstream.updated, self.cursor_following)
+        self.next_trial()  
+        
+    def _reset(self):
+        self.target1.hide()
+        self.target2.hide()
+        self.target3.hide()
+        self.background1.show()
+        self.background2.show()
+        self.background3.show()
+        self.background5.show()
+        self.cursor.show()
+        self.text_trial.hide()
+        self.result_timer.reset()
+       
+    def finish(self):
+        
+        self.daqstream.stop()
+        self.target1.hide()
+        self.target2.hide()
+        self.target3.hide()
+        self.background1.hide()
+        self.background2.hide()
+        self.background3.hide()
+        self.background5.hide()
+        self.cursor.hide()
+        self.text_trial.hide()
+        self.text_exp.show()
+        
+
+    def key_press(self, key):
+        if key == util.key_escape:
+            self.finish()
+        else:
+            super().key_press(key)
+              
+            
+    def read_time(self):
+        current_time = datetime.datetime.now()
+        t = current_time.strftime("%Y%m%d%H%M%S")
+        return t
+
 
 '''Module to visualize the MAV during calibration'''
 class SYSCalibration(Task):
@@ -2813,7 +3135,7 @@ class CalibValidation(Task):
         self.daqstream = daqstream
         self.daqstream.start()
         
-        self.timer = Counter(RAW_S_RATE/CAL_SAMPLE_SIZE*30)
+        self.timer = Counter(RAW_S_RATE/CAL_SAMPLE_SIZE*VALIDATION_TIME)
         self.timer.timeout.connect(self.finish)
     
     def prepare_graphics(self, container):
@@ -2855,6 +3177,7 @@ if __name__ == '__main__':
     task.add_argument('--ACPNPTrain', action='store_true')
     task.add_argument('--ACPNP1', action='store_true')
     task.add_argument('--ACPNP2', action='store_true')
+    task.add_argument('--ACBNBTrain', action='store_true')
     task.add_argument('--ACBNB', action='store_true')
     task.add_argument('--DCtrainVisible', action='store_true')
     task.add_argument('--DCtrainInv', action='store_true')
@@ -2863,6 +3186,7 @@ if __name__ == '__main__':
     task.add_argument('--DCPNPTrain', action='store_true')
     task.add_argument('--DCPNP1', action='store_true')
     task.add_argument('--DCPNP2', action='store_true')
+    task.add_argument('--DCBNBTrain', action='store_true')
     task.add_argument('--DCBNB', action='store_true')
     task.add_argument('--Calibration', action='store_true')
     task.add_argument('--CalibrationLow', action='store_true')
@@ -2871,6 +3195,7 @@ if __name__ == '__main__':
     task.add_argument('--SetDCtrl', action='store_true')
     task.add_argument('--SetLDACtrl', action='store_true')
     task.add_argument('--ReadCalibration', action='store_true')
+    task.add_argument('--InterfaceDebug', action='store_true')
     args = parser.parse_args()
     
     
@@ -2890,6 +3215,7 @@ if __name__ == '__main__':
     VAL_WIN_SIZE = cp.getint('calibration','val_window_size')
     CAL_SAMPLE_SIZE = cp.getint('calibration','cal_sample_per_read')
     SUBJECT_NAME = cp['setting']['subject_name']
+    VALIDATION_TIME = cp.getint('calibration','val_time');
     
     
     n_channels = 2
@@ -2920,6 +3246,8 @@ if __name__ == '__main__':
         exp.run(ACPickNPlaceRecording1(PEMG_pipeline))
     elif args.ACPNP2:
         exp.run(ACPickNPlaceRecording2(PEMG_pipeline))
+    elif args.ACBNBTrain:
+        exp.run(ACBoxNBlocksTrain(PEMG_pipeline))
     elif args.ACBNB:
         exp.run(ACBoxNBlocksRecording(PEMG_pipeline))
     elif args.DCtrainVisible:
@@ -2936,6 +3264,8 @@ if __name__ == '__main__':
         exp.run(DCPickNPlaceRecording1(PEMG_pipeline))
     elif args.DCPNP2:
         exp.run(DCPickNPlaceRecording2(PEMG_pipeline))
+    elif args.DCBNBTrain:
+        exp.run(DCBoxNBlocksTrain(PEMG_pipeline))
     elif args.DCBNB:
         exp.run(DCBoxNBlocksRecording(PEMG_pipeline)) 
     elif args.Calibration:
@@ -2948,6 +3278,10 @@ if __name__ == '__main__':
         exp.run(SYSCalibration())
     elif args.Validation:
         daq = ArduinoMKR_DAQ(samples_per_read = CAL_SAMPLE_SIZE,rate = RAW_S_RATE, mode = 'visualization')
+        exp = Experiment(daq=daq, subject=SUBJECT_NAME)
+        exp.run(CalibValidation())
+    elif args.InterfaceDebug:
+        daq = NoiseGenerator(read_size = CAL_SAMPLE_SIZE, rate = RAW_S_RATE, num_channels = 4)
         exp = Experiment(daq=daq, subject=SUBJECT_NAME)
         exp.run(CalibValidation())
     elif args.SetACtrl:
